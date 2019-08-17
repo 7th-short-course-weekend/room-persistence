@@ -6,6 +6,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
+import com.rathana.roompersistence_demo.data.dao.BookDao;
 import com.rathana.roompersistence_demo.data.dao.CategoryDao;
 import com.rathana.roompersistence_demo.data.entity.Book;
 import com.rathana.roompersistence_demo.data.entity.Category;
@@ -19,7 +20,7 @@ public abstract class MyDatabase extends RoomDatabase {
     static final String DB_NAME="book_db";
 
     public abstract CategoryDao categoryDao();
-
+    public abstract BookDao bookDao();
     public static MyDatabase getInstance(Context context){
         return Room.databaseBuilder(
                 context, MyDatabase.class, DB_NAME)

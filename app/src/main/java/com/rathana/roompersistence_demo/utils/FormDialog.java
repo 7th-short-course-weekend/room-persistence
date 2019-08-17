@@ -12,8 +12,19 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.rathana.roompersistence_demo.R;
+import com.rathana.roompersistence_demo.data.entity.Category;
 
-public class FromDialog extends DialogFragment {
+public class FormDialog extends DialogFragment {
+
+    Category category;
+    String buttonLabel;
+    public void setData(Category category) {
+        this.category = category;
+    }
+
+    public void setButtonLabel(String buttonLabel) {
+        this.buttonLabel = buttonLabel;
+    }
 
     EditText categoryName;
     @NonNull
@@ -25,8 +36,13 @@ public class FromDialog extends DialogFragment {
         View view= LayoutInflater.from(getActivity())
                 .inflate(R.layout.add_category_dialog_layout,null);
         builder.setView(view);
+        builder.setCancelable(false);
         categoryName=view.findViewById(R.id.name);
-        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+
+        if(category!=null)
+            categoryName.setText(category.name);
+
+        builder.setPositiveButton(buttonLabel==null? "save": buttonLabel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if(callback!=null)

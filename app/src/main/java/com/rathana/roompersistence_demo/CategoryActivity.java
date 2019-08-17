@@ -1,7 +1,6 @@
 package com.rathana.roompersistence_demo;
 
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,16 +9,18 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.rathana.roompersistence_demo.adapter.CategoryAdapter;
+import com.rathana.roompersistence_demo.callback.SingleItemClickCallback;
 import com.rathana.roompersistence_demo.data.MyDatabase;
 import com.rathana.roompersistence_demo.data.dao.CategoryDao;
 import com.rathana.roompersistence_demo.data.entity.Category;
-import com.rathana.roompersistence_demo.utils.FromDialog;
+import com.rathana.roompersistence_demo.utils.FormDialog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryActivity extends AppCompatActivity
-        implements FromDialog.DialogCallback<String> {
+        implements FormDialog.DialogCallback<String>,
+        SingleItemClickCallback<Category> {
 
     FloatingActionButton btnAdd;
     RecyclerView rvCategory;
@@ -38,7 +39,7 @@ public class CategoryActivity extends AppCompatActivity
         rvCategory=findViewById(R.id.rvCategory);
 
         btnAdd.setOnClickListener(v->{
-            FromDialog dialogFragment=new FromDialog();
+            FormDialog dialogFragment=new FormDialog();
             dialogFragment.show(getSupportFragmentManager(),"add dialog");
             dialogFragment.setCallback(this);
         });
@@ -77,4 +78,29 @@ public class CategoryActivity extends AppCompatActivity
     }
 
     private static final String TAG = "CategoryActivity";
+
+    //delete
+    @Override
+    public void onEdit(Category category,int pos) {
+        FormDialog formDialog= new FormDialog();
+        formDialog.show(getSupportFragmentManager(),"edit");
+        formDialog.setData(category);
+        formDialog.setButtonLabel("save change");
+        formDialog.setCallback(new FormDialog.DialogCallback<String>() {
+            @Override
+            public void onClicked(String data) {
+                Log.e(TAG, "onClicked: "+ data);
+                category.name=data;
+                categoryDao.update(category);
+                categoryAdapter.editItem(category,pos);
+            }
+        });
+
+    }
+
+    @Override
+    public void onRemove(Category category, int pos) {
+        categoryDao.delete(category);
+        categoryAdapter.removeItem(category,pos);
+    }
 }
